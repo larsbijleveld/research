@@ -102,14 +102,14 @@ def define_generator(image_shape=(1024,1024,3)):
 	e3 = define_encoder_block(e2, 256)
 	e4 = define_encoder_block(e3, 512)
 	e5 = define_encoder_block(e4, 512)
-	e6 = define_encoder_block(e5, 512)
+	e6 = define_encoder_block(e5, 1024)
 	e7 = define_encoder_block(e6, 1024)
 	# bottleneck, no batch norm and relu
-	b = Conv2D(512, (4,4), strides=(2,2), padding='same', kernel_initializer=init)(e7)
+	b = Conv2D(1024, (4,4), strides=(2,2), padding='same', kernel_initializer=init)(e7)
 	b = Activation('relu')(b)
 	# decoder model
 	d1 = decoder_block(b, e7, 1024)
-	d2 = decoder_block(d1, e6, 512)
+	d2 = decoder_block(d1, e6, 1024)
 	d3 = decoder_block(d2, e5, 512)
 	d4 = decoder_block(d3, e4, 512, dropout=False)
 	d5 = decoder_block(d4, e3, 256, dropout=False)
@@ -196,11 +196,11 @@ def summarize_performance(step, g_model, dataset, n_samples=3):
 		pyplot.axis('off')
 		pyplot.imshow(X_realB[i])
 	# save plot to file
-	filename1 = 'plot_%06d.png' % (step+1)
+	filename1 = 'plot_%06d_UI.png' % (step+1)
 	pyplot.savefig(filename1)
 	pyplot.close()
 	# save the generator model
-	filename2 = 'model_%06d_highdim.h5' % (step+1)
+	filename2 = 'model_%06d_UI.h5' % (step+1)
 	g_model.save(filename2)
 	print('>Saved: %s and %s' % (filename1, filename2))
 
